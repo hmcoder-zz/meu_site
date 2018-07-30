@@ -1,0 +1,188 @@
+Aula GIT - resumo
+
+* Primeiro passo:
+	- criar uma conta github;
+	- baixar/instalar o git na máquina;
+	
+* segundo passo:
+	- criar a chave de segurança do usuário:	ssh-keygen -t rsa -C "seu_email@provedor.com"
+		- chave criada por default em:	c:\users\%username%\.ssh
+	- abrir o arquivo id_rsa.pub / copiar o conteúdo (CTRL+A / CTRL+C) e colar conta do Github: "Account Settings" - "SSH Public Keys"
+
+# GIT - repositório local:	
+
+* comandos básicos:
+	
+	git tag										lista tags existentes em um projeto;
+	git tag [nome_tag]							adiciona uma nova tag ao estado atual do projeto;
+		> tags são normalmente utilizadas para controle de versão do projeto;
+	
+	git checkout [tag_versao]					perimite visualizar como o projeto estava no momento da marcação da tag;
+	
+	git diff [tag_versao] [outro tag_versao]	compara alterações entre as duas versões;
+	
+	git blame [arquivo]							mostra quem realizou atualizações no arquivo e quando foram feitas as alterações;
+	> para sair do blame, pressione a tecla "q"
+	
+
+* criando um novo projeto:
+	- crie uma pasta e acesse-a via 'cmd';
+	- dentro da pasta, digite:	git 	
+	
+	git ls-files								lista arquivos dentro do projeto;
+	
+	git status									verifica estado dos arquivos no repositório;
+	
+	git add [arquivo]							adiciona um arquivo ao repositório (passa a ser controlado/tracked pelo git;
+	
+	git commit -m [descrição do commit]			commita o(s) arquivo(s) do projeto;
+	
+	git commit -am [descriçao do commit]		adiciona e commita o arquivo numa única linha de comando;
+	
+	OBS: 	qdo você cria/altera uma arquivo, ele é exibido como 'untracked'
+			por meio do git add, você informa ao Git que ele deve passar a rastrear as alterações do arquivo;
+			commit "entrega" as alterações realizadas ao projeto;
+	
+	# antes de commitar um projeto pela primeira vez, é necessário informar o responsável pelas alterações:
+	
+		-  para o projeto atual apenas:
+		
+		git config user.name "hugomarquesgit"
+		git config.user.email "hmbrazil@gmail.com"
+		
+		- para definir as variáveis acima globalmente (para todos o projetos)
+		
+		git config --global user.[name/email] "[XXX]"
+	
+	# recapitulando (conteúdo teórico):
+	
+	no ciclo básico, interagimos com três estgágios diferentes do repositório:
+	
+	- primeiro estágio: interação com o "working directory" = nosso sistema de arquivo atual;
+		- quando não há diferença entre os arquivos armazenados no repositório e como eles estão atualmente, dizemos que o working directory está "limpo";
+		, do contrário, havendo diferenças, dizemos que o working directory está marcado como "sujo";
+	
+	- segundo estágio: index/workin area =  criado pelo git add;
+		- estágio transitório e pode ser alterado ainda antes de se tornar um passo do projeto: podemos adicionar novos arquivos, removê-los ou alterá-los;
+	
+	- terceiro estágio: HEAD = criado por meio do commit;
+		- persistência/gravação dos dados transitórios, com todos os arquivos novos e alterados, no repositório local;
+			
+# GIT - repositório remoto:
+
+	- primeiro passo: criando um repositório remoto na página do githib:
+		- na página do github, ir na opção "create new repository";
+		- informar o nome de repositório, descrição e clicar em "create repository";
+		- criado o repositório, o github retornará o link de acesso ao repositório remoto;
+		
+	- segundo passo: vinculando a pasta do repositório local ao repositório remoto:
+		git remote add [alias_do_repositprio] [url_do_repositório_remoto]
+		> convencioanlmente usa-se o alias "origin", podendo ser adotado qualquer outro nome;
+		
+	comandos básicos:
+	
+	git clone [url]								copia um projeto git para a máquina local;
+
+	git push origin master						transfere os arquivos do repositório local para o remoto;
+	git pull origin master						trás as alterações realizadas por outros colaboradores para o git local;
+	
+	git log										exibe autor/data/hora dos commits realizados com as respectivas mensagens de histórico dos commits;
+	git whatchanged								exibe as mesmas informações acima e quais arquivos foram adicionados/adicionados/excluídos;
+	git whatchanged -p 							exibe as mesmas informações acima e o que foi alterado em cada linha;
+	
+	- branches
+		- são bifurcações do projeto principal, que possibilitam desenvolver separadamente cada uma das funcionaliades/módulos
+		sem afetar/interferir em outras partes do projeto;
+		
+	git branch									exibe branches existentes do projeto;	(a branch em uso é exibida com um "*" na frente);
+	git branch [design]							cria um nova branch entitulada "design"
+	git checkout [design]						alterna da branch atual para a branch design;
+	git push -u origin [design]					compartilha e branch design (local) com outros desenvolvedores;
+	git branch -r								exibe branches existentes em um repositório remoto;
+	git branch -t [design] origin/[design]		copia uma branch remota para o repositório local;
+	git checkout -b [design]					cria uma branch com nome "design" e já entra nela direto;
+	
+# Resolvendo conflitos:
+
+	exemplo: 	Hugo realiza alterações no arquivo index.html e atualiza as informações do repositório remoto (git push origin master);
+				em seguida, o Rafael tenta subir alterações ralizadas no mesmo arquivo index.html cujo Hugo subiu antes;
+				note que o arquivo de origem do Rafael agora encontra-se não sincronizado, devido as alterações realizadas por Hugo,
+				após o git pull do Rafael..
+				
+	solução:	(1) tratamento automático de conflitos: Os dois realizaram alterações em diferentes conteúdos do código (linhas)
+				Rafael efetuará um 'git pull' e o git automaticamente mesclará as alterações realizadas pelo Hugo e pelo Rafael, Rafael salvará o
+				arquivo com as suas alterações e efetuará um 'git commit' e um  'git push', que agora ocorrerá sem problemas;
+				
+				(2) tratamento manual de conflitos: Caso os dois tenham alterados o mesmo conteúdo do código (linhas)
+				Rafael efetuará um 'git pull', mas o git não conseguirá realizar a mesclagem das alterações , de modo que o Rafael deverá
+				decidir quais alterações serão mantidas, salvar o arquivo e realizar o 'git commit' e o 'git push' normalmente;
+				
+	OBS:	Entre as maiores dificuldades está o fato de você não necessariamente saber o que um outro desenvolvedor quis fazer.
+			Por isso, nem sempre nos sentimos seguros em tratar conflitos. Para isso, é bom que cada commit tenha uma mensagem clara e que indique
+			a intenção do desenvolvedor para aquelas alterações.
+	
+	OBS(2):	Há ainda a opção de trancar o arquivo enquanto estiver efetuando as alterações 'git lock', no entanto, ela não é recomendada, já que
+			ninguém mais poderá alterar o arquivo até que o usuário bloqueador do arquivo o destrave;
+			
+	OBS(3):	O comando git mergetool --tool-help mostra no console uma lista de programas possíveis de ser utilizados. Dessa lista,
+			pode-se escolher um, 	instalar no seu computador e utilizar através do comando git mergetool -t nome_do_programa.
+
+# Boas práticas (para evitar conflitos)
+
+	git checkout -b desenvolvimento				cria uma branch local para trabalhar nela;
+	git add index.html							adiciona o arquivo para ser commitado;
+	git commit "mensagem"						commita na branch local;
+	git checkout master							alterna para a branch master;
+	git pull									atualiza/verifica se não há novas atualizações feitas por outros desenvolvedores;
+	* ops! existem alterações na branch master para resolver..
+	git rebase master desenvolvimento			atualiza a branch desenvolvimento com os commits da branch master (commit a commit)
+	git branch									verifica em qual brach está (desenvolvimento)
+	git checkout master							volta para a branch master;
+	git merge desenvolvimento					atualiza com as suas informações;
+	git push									sobre as atualizações para o repositório remoto;
+	
+	OBS:	Muitos desenvolvedores que utilizam o Git usufruem desse ciclo para trabalhar em seus projetos,
+	usando a branch local "master" apenas como uma transição entre a branch remota "master" e as outras branches locais.
+	
+	* mas o rebase pode falhar... (caso os desenvolvedores tenham alterado o mesmo conteúdo de um mesmo arquivo = linhas iguais)
+	- Nesse caso, deve-se:
+
+	- resolver os conflitos manualmente / salvar as alterações;
+	git add [arquivo conflitado/alterado]
+	git rebase --continue						realizar esses três passos para cada commit que conflitar;
+	git checkout master
+	gir merge desenvolvimento
+	git push
+	
+# Controle avançado e alterações
+
+	git checkout [nome_arquivo]					desfaz as alterações feitas em um arquivo, retornando para o estado do último commit;
+	git checkout master [nome_arquivo]			traz a informação do [nome_arquivo] da brach master direto para a branch atual, deixando-o pronto para o commit;
+	git reset HEAD [nome_arquivo]				tira o arquivo do estado de index (já tinha dado 'git add' e o arquivo já estava pronto para ser commitado);
+	git reset [hash_do_commit]						retorna para as alterações do commit específico  (caso o arquivo já tenha sido commitado);
+	git revert [hash_do_commit]					desfaz alterações realizadas por um commit específico;
+	git revert -n [hash_do_commit]				reverte as alterações do commit e adiciona-as ao working directory (permitindo alterações adicionais antes do commit de revsersão);
+	
+	git stash									salva as alterações em um lugar temporário, para adepois retornar de onde parou (retorna para o último 'git add');
+												ex: você deu um 'git add' e continuou fazendo alterações no arquivo e, depois, se deu conta de que
+												gostaria de corrigir algo lá atrás, mas não gostaria de perder o que você está trabalhando;
+	
+	git stash lista								lista as informações guardadas em stashs/tashs existentes;
+	git stash pop								retoma o último stash da lista;
+	git stash apply [numero_do_stash]			retoma para um stash específico;
+	git stash drop								elimina stash guardados;
+	
+	# Localizando um commit específico sem saber exatelmente qual é..
+	git bisect start							ativa o modo bisect
+		git bisect bad HEAD						informa um commit que eu tenho certeza que é ruim;
+		git bisect good [hash_commit]			informa um commit que eu tenho certeza que é bom;
+			* O Git agora de fornecerá alguns commits para você classificar se é bom ou ruim (git bisect god/bad)
+				- com base nas suas informações 'bom/ruim' o git vai te fornecendo outras opções até você chegar no commit com as informações desejadas;
+				
+	* o ciclo de bisect trabalha em uma branch exclusiva no repositório local. Portanto, para corrigir o erro, podemos utilizar os comandos
+	git reset, git revert ou ver as alterações realizadas naquele commit específico com 'git show [hasg_do_commit]', para então decidir
+	a melhor maneira de corrigir
+	
+	Daí a importância de realizarmos pequenos commits, gravarmos pequenos avanços em nossos projetos, mesmo que em muitos commits, pois temos 
+	ferramentas para encontrar qualquer problema posteriormente de maneira automatizada.
+
